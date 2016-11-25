@@ -226,20 +226,50 @@ itemView activeIndex (Distance h v) index { text } =
 
                 Nothing ->
                     ( 0, 0 )
+
+        transition =
+            if List.member activeIndex [ Just index, Nothing ] then
+                ""
+            else
+                "transform 200ms"
+
+        zIndex =
+            if activeIndex == Just index then
+                "1"
+            else
+                "0"
+
+        scaleFactor =
+            if activeIndex == Just index then
+                1.05
+            else
+                1
+
+        shadow =
+            if activeIndex == Just index then
+                boxShadow3 (px 3) (px 3) (px 10)
+            else
+                boxShadow none
     in
         H.li
             [ styles
                 [ displayFlex
                 , boxSizing borderBox
-                , transform <| translate2 (px dx) (px dy)
+                , transforms
+                    [ translate2 (px dx) (px dy)
+                    , scale scaleFactor
+                    ]
                 , padding2 (px 0) (px 10)
                 , alignItems center
                 , height (px <| itemHeight - 2 * itemMargin)
                 , border3 (px 1) solid (hex "#d00")
                 , margin (px itemMargin)
                 , cursor nsResize
+                , backgroundColor (hex "#fff")
+                , shadow
                 , property "-webkit-user-select" "none"
-                  --                , property "transition" "transform 400ms"
+                , property "transition" transition
+                , property "z-index" zIndex
                 ]
             , Draggable.triggerOnMouseDown (StartDragging index)
             ]
