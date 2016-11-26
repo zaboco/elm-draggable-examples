@@ -2,7 +2,7 @@ module SortableList exposing (..)
 
 import Array exposing (Array)
 import Draggable
-import Draggable.Events exposing (onDragBy, onDragEnd)
+import Draggable.Events exposing (onDragBy, onMouseUp)
 import Maybe.Extra as MaybeX
 import Array.Extra as ArrayX
 import Html as H exposing (Html)
@@ -100,7 +100,7 @@ dragConfig : Draggable.Config Msg
 dragConfig =
     Draggable.customConfig
         [ onDragBy (Draggable.deltaToFloats >> DragBy)
-        , onDragEnd StopDragging
+        , onMouseUp StopDragging
         ]
 
 
