@@ -172,13 +172,6 @@ styles =
     Css.asPairs >> Html.Attributes.style
 
 
-baseCss =
-    [ margin (px 0)
-    , padding (px 0)
-    , boxSizing borderBox
-    ]
-
-
 view : Model -> Html Msg
 view { items, draggingItemIndex, draggedDistance } =
     H.ul
@@ -249,7 +242,7 @@ itemView activeIndex (Distance h v) index { text } =
             if activeIndex == Just index then
                 boxShadow3 (px 3) (px 3) (px 10)
             else
-                boxShadow none
+                boxShadow4 (px 3) (px 3) (px 10) (px -5)
     in
         H.li
             [ styles
