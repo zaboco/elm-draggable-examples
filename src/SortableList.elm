@@ -2,18 +2,16 @@ module SortableList exposing (..)
 
 import Array exposing (Array)
 import Draggable
-import Draggable.Events exposing (onDragBy, onMouseUp)
-import Maybe.Extra as MaybeX
+import Draggable.Events exposing (onDragBy, onMouseDownKeyed, onMouseUp)
 import Array.Extra as ArrayX
-import Html as H exposing (Html)
+import Html exposing (Html)
 import Html.Attributes
 import Css exposing (..)
-import Task
 
 
 main : Program Never Model Msg
 main =
-    H.program
+    Html.program
         { init = init
         , update = update
         , subscriptions = subscriptions
@@ -60,7 +58,7 @@ type alias HorizontalDistance =
 
 type Msg
     = DragBy Delta
-    | StartDragging Index Draggable.Msg
+    | StartDragging String
     | StopDragging
     | DragMsg Draggable.Msg
 
@@ -100,6 +98,7 @@ dragConfig : Draggable.Config Msg
 dragConfig =
     Draggable.customConfig
         [ onDragBy (Draggable.deltaToFloats >> DragBy)
+        , onMouseDownKeyed StartDragging
         , onMouseUp StopDragging
         ]
 
@@ -113,8 +112,8 @@ update msg ({ items, draggingItemIndex, draggedDistance } as model) =
         DragBy delta ->
             ( { model | draggedDistance = increaseDistance delta draggedDistance }, Cmd.none )
 
-        StartDragging index dragMsg ->
-            ( { model | draggingItemIndex = Just index }, message <| DragMsg dragMsg )
+        StartDragging index ->
+            ( { model | draggingItemIndex = index |> String.toInt |> Result.toMaybe }, Cmd.none )
 
         StopDragging ->
             ( { model
@@ -158,23 +157,19 @@ insertAt index newItem items =
             |> flip Array.append after
 
 
-message : msg -> Cmd msg
-message x =
-    Task.perform identity (Task.succeed x)
-
-
 subscriptions : Model -> Sub Msg
 subscriptions { drag } =
     Draggable.subscriptions DragMsg drag
 
 
+styles : List Mixin -> Html.Attribute msg
 styles =
     Css.asPairs >> Html.Attributes.style
 
 
 view : Model -> Html Msg
 view { items, draggingItemIndex, draggedDistance } =
-    H.ul
+    Html.ul
         [ styles
             [ width (px 200)
             , border3 (px 1) dashed (hex "#000")
@@ -244,7 +239,7 @@ itemView activeIndex (Distance h v) index { text } =
             else
                 boxShadow4 (px 3) (px 3) (px 10) (px -5)
     in
-        H.li
+        Html.li
             [ styles
                 [ displayFlex
                 , boxSizing borderBox
@@ -264,6 +259,6 @@ itemView activeIndex (Distance h v) index { text } =
                 , property "transition" transition
                 , property "z-index" zIndex
                 ]
-            , Draggable.triggerOnMouseDown (StartDragging index)
+            , Draggable.mouseTrigger (toString index) DragMsg
             ]
-            [ H.text text ]
+            [ Html.text text ]
