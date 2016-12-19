@@ -9,10 +9,12 @@
     "exposed-modules": [],
     "dependencies": {
         "Fresheyeball/elm-return": "6.0.3 <= v < 7.0.0",
+        "SwiftsNamesake/proper-keyboard": "2.0.0 <= v < 3.0.0",
         "elm-community/array-extra": "1.0.2 <= v < 2.0.0",
         "elm-community/maybe-extra": "3.0.0 <= v < 4.0.0",
         "elm-lang/core": "5.0.0 <= v < 6.0.0",
         "elm-lang/html": "2.0.0 <= v < 3.0.0",
+        "elm-lang/keyboard": "1.0.1 <= v < 2.0.0",
         "elm-lang/mouse": "1.0.1 <= v < 2.0.0",
         "rtfeldman/elm-css": "7.0.0 <= v < 8.0.0",
         "zaboco/elm-draggable": "2.0.0 <= v < 3.0.0"
