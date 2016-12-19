@@ -147,19 +147,20 @@ styles =
     Css.asPairs >> Attr.style
 
 
+style s =
+    styles [ s ]
+
+
 view : Model -> Html Msg
 view { value, mode } =
     let
         borderStyle =
-            case ( value, mode ) of
-                ( Fixed _, _ ) ->
-                    border2 zero none
-
-                ( Tuning _, Minor ) ->
-                    borderBottom3 (px 1) dashed (hex "000")
-
-                ( Tuning _, Major ) ->
+            case value of
+                Fixed _ ->
                     borderBottom3 (px 1) solid (hex "000")
+
+                Tuning _ ->
+                    borderBottom3 (px 1) dashed (hex "000")
     in
         Html.div
             [ styles [ margin (px 64) ]
@@ -172,13 +173,37 @@ view { value, mode } =
                     [ cursor nsResize
                     , borderStyle
                     , width (em 1.5)
-                    , textAlign center
+                    , textAlign right
                     , display inlineBlock
                     ]
                 , Draggable.mouseTrigger "" DragMsg
                 ]
-                [ Html.text <| toString <| evalTunable value ]
+                [ valueView mode value ]
             ]
+
+
+valueView : TuneMode -> Tunable -> Html Msg
+valueView mode value =
+    let
+        actualValue =
+            Basics.round <| evalTunable value
+    in
+        case ( value, mode ) of
+            ( Fixed _, _ ) ->
+                Html.text <| toString actualValue
+
+            ( Tuning _, Minor ) ->
+                Html.text <| toString actualValue
+
+            ( Tuning _, Major ) ->
+                if actualValue > -10 && actualValue < 10 then
+                    Html.span [ style <| color (hex "aaa") ] [ Html.text <| toString actualValue ]
+                else
+                    Html.div
+                        [ style <| display inline ]
+                        [ Html.span [] [ Html.text <| toString <| actualValue // 10 ]
+                        , Html.span [ style <| color (hex "aaa") ] [ Html.text <| toString <| abs <| Basics.rem actualValue 10 ]
+                        ]
 
 
 main : Program Never Model Msg
