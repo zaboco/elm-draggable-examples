@@ -37,7 +37,7 @@ init =
 
 dragConfig : Draggable.Config Msg
 dragConfig =
-    Draggable.basicConfig (Draggable.deltaToFloats >> OnDragBy)
+    Draggable.basicConfig OnDragBy
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -79,7 +79,7 @@ view { xy } =
     in
         Html.div
             [ styles css
-            , Draggable.triggerOnMouseDown DragMsg
+            , Draggable.mouseTrigger "" DragMsg
             ]
             [ Html.text "Drag me" ]
 

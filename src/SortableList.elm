@@ -2,11 +2,12 @@ module SortableList exposing (..)
 
 import Array exposing (Array)
 import Draggable
-import Draggable.Events exposing (onDragBy, onMouseDownKeyed, onMouseUp)
+import Draggable.Events exposing (onDragBy, onMouseDown)
 import Array.Extra as ArrayX
 import Html exposing (Html)
 import Html.Attributes
 import Css exposing (..)
+import Html.Events exposing (onMouseUp)
 
 
 main : Program Never Model Msg
@@ -97,9 +98,8 @@ vertical (Distance _ verticalDistance) =
 dragConfig : Draggable.Config Msg
 dragConfig =
     Draggable.customConfig
-        [ onDragBy (Draggable.deltaToFloats >> DragBy)
-        , onMouseDownKeyed StartDragging
-        , onMouseUp StopDragging
+        [ onDragBy DragBy
+        , onMouseDown StartDragging
         ]
 
 
@@ -260,5 +260,6 @@ itemView activeIndex (Distance h v) index { text } =
                 , property "z-index" zIndex
                 ]
             , Draggable.mouseTrigger (toString index) DragMsg
+            , onMouseUp StopDragging
             ]
             [ Html.text text ]
