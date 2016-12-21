@@ -1,0 +1,36 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    margin: 128px 32px;
+}
+
+.select {
+    display: inline-block;
+    cursor: ns-resize;
+    padding: 4px;
+}
+
+.select-current-item {
+    padding: 4px;
+    -webkit-user-select: none;
+    text-decoration: underline;
+}
+
+.select-list {
+    background-color: whitesmoke;
+    position: absolute;
+    top: 0;
+}
+
+.select-item {
+    opacity: 0.4;
+    padding: 4px;
+}
+
+.select-item.selected {
+    opacity: 1;
+}
