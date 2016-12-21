@@ -71,7 +71,12 @@ normalize ({ current, before, after, status } as model) =
                     rem deltaAsInt itemHeight
             in
                 if passedItemsCount == 0 then
-                    model
+                    if List.isEmpty before && delta > 0 then
+                        { model | status = Selecting 0 }
+                    else if List.isEmpty after && delta < 0 then
+                        { model | status = Selecting 0 }
+                    else
+                        model
                 else if passedItemsCount <= -1 then
                     case List.head after of
                         Nothing ->
