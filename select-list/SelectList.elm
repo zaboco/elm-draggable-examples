@@ -60,47 +60,36 @@ normalize : Model -> Model
 normalize ({ current, before, after, status } as model) =
     let
         normalizeSelecting delta =
-            let
-                deltaAsInt =
-                    round delta
-
-                passedItemsCount =
-                    deltaAsInt // itemHeight
-
-                deltaRemainder =
-                    rem deltaAsInt itemHeight
-            in
-                if passedItemsCount == 0 then
-                    if List.isEmpty before && delta > 0 then
-                        { model | status = Selecting 0 }
-                    else if List.isEmpty after && delta < 0 then
-                        { model | status = Selecting 0 }
-                    else
+            if delta < -itemHeight / 2 then
+                case List.head after of
+                    Nothing ->
                         model
-                else if passedItemsCount <= -1 then
-                    case List.head after of
-                        Nothing ->
-                            model
 
-                        Just firstAfter ->
-                            { model
-                                | current = firstAfter
-                                , before = current :: before
-                                , after = List.drop 1 after
-                                , status = Selecting <| toFloat deltaRemainder
-                            }
-                else
-                    case List.head before of
-                        Nothing ->
-                            model
+                    Just firstAfter ->
+                        { model
+                            | current = firstAfter
+                            , before = current :: before
+                            , after = List.drop 1 after
+                            , status = Selecting <| itemHeight + delta
+                        }
+            else if delta > itemHeight / 2 then
+                case List.head before of
+                    Nothing ->
+                        model
 
-                        Just firstBefore ->
-                            { model
-                                | current = firstBefore
-                                , after = current :: after
-                                , before = List.drop 1 before
-                                , status = Selecting <| toFloat deltaRemainder
-                            }
+                    Just firstBefore ->
+                        { model
+                            | current = firstBefore
+                            , after = current :: after
+                            , before = List.drop 1 before
+                            , status = Selecting <| delta - itemHeight
+                        }
+            else if List.isEmpty before && delta > 0 then
+                { model | status = Selecting 0 }
+            else if List.isEmpty after && delta < 0 then
+                { model | status = Selecting 0 }
+            else
+                model
     in
         case status of
             Fixed ->
